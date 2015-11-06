@@ -1,6 +1,6 @@
 var container;
 var scene, camera, light, renderer;
-var renderSize = new THREE.Vector2(window.innerWidth, window.innerHeight);
+var renderSize = new THREE.Vector2(window.innerWidth, 2500*(window.innerWidth/3750));
 //wtf
 // var renderSize = new THREE.Vector2(2448,3264);
 var mouse = new THREE.Vector2(0.0,0.0);
@@ -26,11 +26,8 @@ function init(){
 	container = document.getElementById( 'container' );
 	container.appendChild(renderer.domElement);
 
-    gradient = new Gradient(window.innerWidth, window.innerHeight);
-    gradient.init();
+    
     _texture = THREE.ImageUtils.loadTexture("assets/textures/test.jpg");
-    // _texture = new THREE.Texture(gradient.canvas);
-	// texture = THREE.ImageUtils.loadTexture("assets/textures/IMG_4215.JPG");
 	_texture.minFilter = _texture.magFilter = THREE.NearestFilter;
     _scene = new THREE.Scene();
     _camera = new THREE.OrthographicCamera( renderSize.x / - 2, renderSize.x / 2, renderSize.y / 2, renderSize.y / - 2, -10000, 10000 );
@@ -39,7 +36,7 @@ function init(){
     _renderer.setSize( renderSize.x, renderSize.y );
     _renderer.setClearColor(0xffffff,1.0);
     _customShaders = new CustomShaders();
-    _geo = new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight);
+    _geo = new THREE.PlaneBufferGeometry(renderSize.x, renderSize.y);
     // _geo = new THREE.SphereGeometry(500,250,250);
     _mat = new THREE.ShaderMaterial({
             uniforms: _customShaders.gridShader.uniforms,
@@ -141,7 +138,6 @@ var counter = 0;
 function onMouseDown(){
 	mouseDown = true;
     // gradient.jumpForward();
-    gradient.sampleColors();
     r2 = 1.0;
     if(counter%2 == 0){
         _mat.uniforms.grid.value = 0.0;
@@ -171,15 +167,14 @@ function draw(){
 	  if(fbMaterial.fbos[i].material.uniforms["r2"])fbMaterial.fbos[i].material.uniforms["r2"].value = r2;
       // fbMaterial.fbos[i].material.uniforms.mouse.value = new THREE.Vector2(Math.sin(time), Math.cos(time));
       fbMaterial.fbos[i].material.uniforms.mouse.value = new THREE.Vector2(mouse.x,mouse.y);
-      fbMaterial.material.uniforms.mouse.value = new THREE.Vector2(window.innerWidth/2, window.innerHeight/2);
+      fbMaterial.material.uniforms.mouse.value = new THREE.Vector2(renderSize.x/2, renderSize.y/2);
 
 	}
     _mesh.material.uniforms.time.value = time;
     _mesh.material.uniforms.mouse.value = new THREE.Vector2(mouse.x,mouse.y);;
 
     _renderer.render(_scene, _camera);
-    // gradient.update();
-    // _texture.needsUpdate = true;
+
     texture.needsUpdate = true;
 
     fbMaterial.update();

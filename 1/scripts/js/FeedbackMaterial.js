@@ -15,7 +15,7 @@ function FeedbackMaterial(RENDERER, SCENE, CAMERA, TEXTURE, SHADERS){
 
     this.mesh;
     
-    //this.geometry = new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight);
+    //this.geometry = new THREE.PlaneBufferGeometry(renderSize.x, renderSize.y);
     
     
     this.fbos = [];
@@ -45,7 +45,7 @@ function FeedbackMaterial(RENDERER, SCENE, CAMERA, TEXTURE, SHADERS){
         this.fbos.push(this.fbo4);
         
         for(var i = 0; i < this.fbos.length; i++){
-          this.fbos[i].material.uniforms.resolution.value = new THREE.Vector2(window.innerWidth, window.innerHeight);
+          this.fbos[i].material.uniforms.resolution.value = new THREE.Vector2(renderSize.x, renderSize.y);
         }
         
         this.fbo1.material.uniforms.texture.value = this.frameDiff.renderTarget; 
@@ -59,10 +59,10 @@ function FeedbackMaterial(RENDERER, SCENE, CAMERA, TEXTURE, SHADERS){
         });
         this.material.uniforms["texture"].value = this.fbo4.renderTarget;
         this.material.uniforms["texture"].minFilter = this.material.uniforms["texture"].magFilter = THREE.LinearFilter;
-        this.material.uniforms["resolution"].value = new THREE.Vector2(window.innerWidth, window.innerHeight);
-        this.material.uniforms["mouse"].value = new THREE.Vector2(window.innerWidth, 0);
+        this.material.uniforms["resolution"].value = new THREE.Vector2(renderSize.x, renderSize.y);
+        this.material.uniforms["mouse"].value = new THREE.Vector2(renderSize.x, 0);
         
-        this.geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight, 0);
+        this.geometry = new THREE.PlaneGeometry(renderSize.x, renderSize.y, 0);
         // this.geometry = new THREE.PlaneGeometry(2560/2,1600/2, 0);
         // this.geometry = new THREE.PlaneGeometry(1080,720, 0);
 
@@ -73,7 +73,7 @@ function FeedbackMaterial(RENDERER, SCENE, CAMERA, TEXTURE, SHADERS){
 
     this.resize = function(){
         for(var i = 0; i < this.fbos.length; i++){
-          this.fbos[i].material.uniforms.resolution.value = new THREE.Vector2(window.innerWidth, window.innerHeight);
+          this.fbos[i].material.uniforms.resolution.value = new THREE.Vector2(renderSize.x, renderSize.y);
         }
     }
 
@@ -97,14 +97,14 @@ function FeedbackMaterial(RENDERER, SCENE, CAMERA, TEXTURE, SHADERS){
 }
 function FeedbackObject(SHADER) {
     this.scene = new THREE.Scene();
-    this.renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat});
+    this.renderTarget = new THREE.WebGLRenderTarget(renderSize.x, renderSize.y, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat});
     this.shader = SHADER;
     this.material = new THREE.ShaderMaterial({
         uniforms: this.shader.uniforms,
         vertexShader: this.shader.vertexShader,
         fragmentShader: this.shader.fragmentShader    
     });
-    this.geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
+    this.geometry = new THREE.PlaneGeometry(renderSize.x, renderSize.y);
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(0, 0, 0);
     this.scene.add(this.mesh);
