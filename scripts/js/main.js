@@ -1,11 +1,11 @@
 var container;
 var scene, camera, light, renderer;
 var renderSize = new THREE.Vector2(window.innerWidth, window.innerHeight);
-// var renderSize = new THREE.Vector2(740, 503);
 var mouse = new THREE.Vector2(0.0,0.0);
 var mouseDown = false;
 var r2 = 0.0;
 var time = 0.0;
+var effect;
 init();
 animate();
 
@@ -22,22 +22,10 @@ function init(){
 	container = document.getElementById( 'container' );
 	container.appendChild(renderer.domElement);
 
-	texture = THREE.ImageUtils.loadTexture("assets/textures/kate-moss-by-steven-klein-for-alexander-mcqueen-spring-summer-2014-8.jpg");
-	shader = new MeshShader();
-	material = new THREE.ShaderMaterial({
-		uniforms: shader.uniforms,
-		vertexShader: shader.vertexShader,
-		fragmentShader: shader.fragmentShader,
-		side: 2,
-		transparent: true
-	});
-	material.uniforms["texture"].value = texture;
-	material.uniforms["resolution"].value = renderSize;
-	material.uniforms["r2"].value = r2;
-	material.uniforms["time"].value = time;
-	geometry = new THREE.PlaneBufferGeometry(renderSize.x, renderSize.y);
-	mesh = new THREE.Mesh(geometry, material);
-	scene.add(mesh);
+	texture = THREE.ImageUtils.loadTexture("assets/textures/arizona-muse-by-steven-klein-for-vogue-us-august-2015.jpg");
+	shaders = new EffectShaders();
+	effect = new Effect("gradient", scene, camera, renderer, texture, shaders);
+	effect.init();
 
 	document.addEventListener("mousemove", onMouseMove);
 	document.addEventListener("mousedown", onMouseDown);
@@ -52,20 +40,16 @@ function animate(){
 function onMouseMove(event){
 	mouse.x = ( event.clientX / renderSize.x ) * 2 - 1;
     mouse.y = - ( event.clientY / renderSize.y ) * 2 + 1;
-	material.uniforms["mouse"].value = new THREE.Vector2(mouse.x, mouse.y);
 }
 function onMouseDown(){
 	mouseDown = true;
 }
 function onMouseUp(){
 	mouseDown = false;
+	// r2 = 0;
 }
 function draw(){
 	time += 0.01;
-	material.uniforms["time"].value = time;
-	if(mouseDown){
-		r2 += 0.005;
-		material.uniforms["r2"].value = r2;
-	}
+	effect.update();
 	renderer.render(scene, camera);
 }
