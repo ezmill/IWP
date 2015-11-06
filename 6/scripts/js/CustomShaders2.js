@@ -550,7 +550,7 @@ var CustomShaders = function(){
 			// "    vec2 offs = vec2(look.y-look.x,look.w-look.z)*vec2(0.0, 0.01);",
 			"    vec2 coord = offs+tc;",
 			"    vec4 repos = texture2D(texture, coord);",
-			"    repos*=1.001;",
+			"    repos*=1.01;",
 			// "    gl_FragColor = repos;",
 
 			"	vec2 q = vUv;",

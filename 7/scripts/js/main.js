@@ -1,6 +1,6 @@
 var container;
 var scene, camera, light, renderer;
-var renderSize = new THREE.Vector2(3750/3, 2500/3);
+var renderSize = new THREE.Vector2(window.innerWidth, 2500*(window.innerWidth/3750));
 // var renderSize = new THREE.Vector2(2448,3264);
 var mouse = new THREE.Vector2(0.0,0.0);
 var mouseDown = false;
@@ -31,9 +31,11 @@ function init(){
     shaders = [ 
         // customShaders.blurShader,
         // paintFlow,
-       	customShaders2.flowShader,
+       	customShaders.warpShader,
         customShaders.diffShader, 
-        customShaders2.warp2,
+        customShaders2.warpShader,
+
+        // paintFlow,
         // customShaders2.paintShader 
         customShaders.passShader
     ];

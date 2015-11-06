@@ -108,10 +108,10 @@ var CustomShaders = function(){
 			"  vec3 hsv = rgb2hsv(tex0.rgb);",
 
 			"  hsv.r += 0.005;",
-			"  //hsv.r = mod(hsv.r, 1.0);",
+			"  hsv.r = mod(hsv.r, 1.0);",
 			"  hsv.g *= 1.05;",
 			// "  hsv.b += 0.;",
-			"  // hsv.g = mod(hsv.g, 1.0);",
+			// "  hsv.g = mod(hsv.g, 2.0);",
 			"  vec3 rgb = hsv2rgb(hsv); ",
 
 			"    vec3 col2 = rgb;",

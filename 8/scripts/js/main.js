@@ -1,6 +1,6 @@
 var container;
 var scene, camera, light, renderer;
-var renderSize = new THREE.Vector2(window.innerWidth, window.innerHeight);
+var renderSize = new THREE.Vector2(window.innerWidth, 2500*(window.innerWidth/3750));
 // var renderSize = new THREE.Vector2(740, 503);
 var mouse = new THREE.Vector2(0.0,0.0);
 var mouseDown = false;
@@ -14,15 +14,15 @@ function init(){
 
     camera = new THREE.OrthographicCamera( renderSize.x / - 2, renderSize.x / 2, renderSize.y / 2, renderSize.y / - 2, -10000, 10000 );
     // camera = new THREE.PerspectiveCamera( 45, renderSize.x/renderSize.y, 0.01, 10000.0 );
-    camera.position.set(0,0,500);
-    controls = new THREE.OrbitControls(camera);
+    camera.position.set(0,0,367);
+    // controls = new THREE.OrbitControls(camera);
 	renderer = new THREE.WebGLRenderer({preserveDrawingBuffer:true});
 	renderer.setSize( renderSize.x, renderSize.y );
 	renderer.setClearColor(0xffffff,1.0);
 
 	container = document.getElementById( 'container' );
 	container.appendChild(renderer.domElement);
-	var url = "assets/textures/cube.jpg";
+	var url = "assets/textures/square.jpg";
 	var urls = [];
 	for(var i = 0; i < 6; i++){
 		urls.push(url);
@@ -32,7 +32,7 @@ function init(){
 		envMap: textureCube,
 		color: 0xffffff,
         refractionRatio: 0.9,
-        reflectivity: 0.95
+        // reflectivity: 0.95
 	});
 	for(var i = 0; i < 200; i++){
 		loadModel("assets/models/gem.obj", material, {

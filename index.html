@@ -2,21 +2,108 @@
 <head>
 	<title>IWP Effect Demo</title>
 	<style>
-		body {
-			color: #fff;
-			font-family:Monospace;
-			font-size:13px;
-			margin: 0px;
-			text-align:center;
-			overflow: hidden;
+		
+		*{
+			font-size: 14px;
 		}
+		body{
+			margin: 0;
+			padding: 0;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			color: black;
+			font-family: "HelveticaNeue-Light", sans-serif;
+		}
+		.main{
+			position: absolute;
+			top: 50%;
+			left: 0%;
+			width: 200px;
+			-webkit-transform:translate(0%, -50%);
+			-moz-transform:translate(0%, -50%);
+			-ms-transform:translate(0%, -50%);
+			-o-transform:translate(0%, -50%);
+			transform:translate(0%, -50%);
+			/*text-align: center;*/
+			background: rgba(255,255,255,0.5);
+			padding: 25px;
+		}
+		.main h1{
+			margin: 0;
+			font-size: 200%;
+		}
+		.effects{
+
+		}
+		.effects a{
+			/*display: block;*/
+			font-size: 100%;
+			color: inherit;
+			margin: 10px 0;
+			text-decoration: none;
+		}
+		.active{
+			text-decoration: underline !important;
+		}
+		iframe{
+			width: 100vw;
+			height: 100vh;
+		}
+		
 	</style>
 </head>
 <body>
-	<div id="container"></div>
-	<script src="scripts/js/three.min.js"></script>
-	<script src="scripts/js/EffectShaders.js"></script>
-	<script src="scripts/js/Effect.js"></script>
-    <script src="scripts/js/main.js"></script>
+	<!-- <div id="container"></div> -->
+	<div class="main">
+		<h1>IWP Effects Demo</h1>
+		<div class="effects">
+			<h2>Effects:</h2>
+			<a href="./1">1</a>
+			<a href="./2">2</a>
+			<a href="./3">3</a>
+			<a href="./4">4</a>
+			<a href="./5">5</a>
+			<a href="./6">6</a>
+			<a href="./7">7</a>
+			<a href="./8">8</a>
+			<a href="./9">9</a>
+			<a href="./10">10</a>
+			<a href="./11">11</a>
+			<p id="directions"></p>
+		</div>
+	</div>
+	<div id="iframe-container">
+		<iframe src="" frameborder="0"></iframe>
+	</div>
+	<!-- // <script src="scripts/js/three.min.js"></script> -->
+	<!-- // <script src="scripts/js/EffectShaders.js"></script> -->
+	<!-- // <script src="scripts/js/Effect.js"></script> -->
+    <!-- // <script src="scripts/js/main.js"></script> -->
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+    	var directions = [
+    		"Click and drag",
+    		"Click and drag",
+    		"Click and drag",
+    		"Click and drag",
+    		"Move your mouse",
+    		"Click and drag",
+    		"Click and drag",
+    		"None",
+    		"Move your mouse",
+    		"Click and drag",
+    		"Click and drag"
+    	]
+    	$(".effects a").click(function(e){
+    		e.preventDefault();
+    		$(".effects a").removeClass("active");
+    		$(this).addClass("active");
+    		$("iframe").attr("src", e.target);
+    		$("#directions").html("Directions: " + directions[e.target.innerHTML - 1])
+    	})
+    </script>
 </body>
 </html>

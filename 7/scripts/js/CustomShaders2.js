@@ -324,9 +324,9 @@ var CustomShaders = function(){
 			"	float step_h = 1.0/resolution.y;",
 			"	vec2 tc = vUv;",
 			"	vec4 input0 = texture2D(texture,tc);",
-			"	kernel[0] = 1.0; kernel[1] = 1.0; kernel[2] = 1.0;",
-			"	kernel[3] = 1.0; kernel[4] = 8.0; kernel[5] = 1.0;",
-			"	kernel[6] = 1.0; kernel[7] = 1.0; kernel[8] = 1.0;",
+			"	kernel[0] = -2.0; kernel[1] = -1.0; kernel[2] = 0.0;",
+			"	kernel[3] = -1.0; kernel[4] = 1.0; kernel[5] = 1.0;",
+			"	kernel[6] = 0.0; kernel[7] = 1.0; kernel[8] = 2.0;",
 			"	offset[0] = vec2(-step_w, -step_h);",
 			"	offset[1] = vec2(0.0, -step_h);",
 			"	offset[2] = vec2(step_w, -step_h);",
@@ -697,7 +697,71 @@ var CustomShaders = function(){
 	        "    ",
 	        "}"
 	    ].join("\n")
-	}
+	},
+	this.gridShader = {
+
+		uniforms: THREE.UniformsUtils.merge( [
+
+			{
+				"texture"  : { type: "t", value: null },
+				"mouse"  : { type: "v2", value: null },
+				"resolution"  : { type: "v2", value: null },
+				"time"  : { type: "f", value: null }
+
+			}
+		] ),
+
+		vertexShader: [
+
+			"varying vec2 vUv;",
+			"void main() {",
+			"    vUv = uv;",
+			"    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+			"}"
+		
+		].join("\n"),
+		
+		fragmentShader: [
+			
+			"uniform sampler2D texture;",
+			"uniform vec2 resolution;",
+			"uniform vec2 mouse;",
+			"uniform float r2;",
+			"varying vec2 vUv;",
+
+			"void main() {",
+			// "	vec4 color = vec4(0.0);",
+			"		vec4	color = texture2D(texture, vUv);",
+
+			"	if(mod(gl_FragCoord.x, 0.03) == 0.0){",
+
+			"		if(mod(gl_FragCoord.y, 0.03) == 0.0){",
+
+			// "			color = texture2D(texture, vUv);",
+			"			color = vec4(0.0);",
+
+			"		}",
+
+			"	}",
+			// "	vec4 color = texture2D(texture, vUv);",
+			"	vec2 q = vUv;",
+		    "	vec2 p = -1.0 + 2.0*q;",
+		    "	p.x *= resolution.x/resolution.y;",
+	    	"	vec2 m = mouse;",
+	    	"	m.x *= resolution.x/resolution.y;",
+		    "	float r = sqrt( dot((p - m), (p - m)) );",
+		    "	float a = atan(p.y, p.x);",
+		    "	vec3 col = texture2D(texture, vUv).rgb;",
+		    "	if(r < r2){",
+		    "		float f = smoothstep(r2, r2 - 0.5, r);",
+		    "		col = mix( col, color.rgb, f);",
+		    "	}",
+			"    gl_FragColor = vec4(color.rgb, 1.0);",
+			"}"
+		
+		].join("\n")
+		
+	},
 	this.warpShader = {
 	    uniforms: THREE.UniformsUtils.merge( [
 
@@ -705,6 +769,7 @@ var CustomShaders = function(){
 	            "texture"  : { type: "t", value: null },
 	            "mouse"  : { type: "v2", value: null },
 	            "time"  : { type: "f", value: null },
+	            "r2"  : { type: "f", value: null },
 	            "resolution"  : { type: "v2", value: null },
 	        }
 	    ] ),
@@ -721,32 +786,45 @@ var CustomShaders = function(){
 	    fragmentShader: [
 			"uniform vec2 resolution;",
 			"uniform float time;",
+			"uniform float r2;",
 			"uniform sampler2D texture;",
 			"varying vec2 vUv;",
 			"uniform vec2 mouse;",
 
 			"void main(){",
-			"	vec2 q = (-resolution.xy + 2.0*gl_FragCoord.xy) / resolution.y;",
+			// "	vec2 q = (-resolution.xy + 2.0*gl_FragCoord.xy) / resolution.y;",
+			"	vec2 q = vUv;",
+			"    vec2 p0 = q;",
+			"    ",
+			// "   p0 += 0.2*cos( 1.5*p0.yx + 1.0*time + vec2(0.1,1.1) );",
+			// "	p0 += 0.2*cos( 2.4*p0.yx + 1.6*time + vec2(4.5,2.6) );",
+			// "	p0 += 0.2*cos( 3.3*p0.yx + 1.2*time + vec2(3.2,3.4) );",
+			// "	p0 += 0.2*cos( 4.2*p0.yx + 1.7*time + vec2(1.8,5.2) );",
+			"	p0 += 0.2*cos( 9.1*p0.yx + 1.1*time + vec2(6.3,3.9) );",
+			// "   p0 += .2*cos( 1.5*p0.yx + 1.0*time + vec2(mouse.x,mouse.y) );",
+			// "	p0 += .2*cos( 2.4*p0.yx + 1.6*time + vec2(mouse.x,mouse.y) );",
+			// "	p0 += .2*cos( 3.3*p0.yx + 1.2*time + vec2(mouse.x,mouse.y) );",
+			// "	p0 += .2*cos( 4.2*p0.yx + 1.7*time + vec2(mouse.x,mouse.y) );",
+			// "	p0 += .2*cos( 9.1*p0.yx + 1.1*time + vec2(mouse.x,mouse.y) );",
+
+			"	float r0 = length( p0 );",
+			"    ",
+			// "    vec3 rgb = texture2D( texture, vec2(r0,     0.0), 0.0 ).rgb;",
+			"    vec3 rgb = texture2D( texture, p0).rgb;",
 			// "	vec2 q = vUv;",
-			"    vec2 p = q;",
-			"    ",
-			// "    p += .2*cos( 1.5*p.yx + 1.0*time + vec2(0.1,1.1) );",
-			// "	p += .2*cos( 2.4*p.yx + 1.6*time + vec2(4.5,2.6) );",
-			// "	p += .2*cos( 3.3*p.yx + 1.2*time + vec2(3.2,3.4) );",
-			// "	p += .2*cos( 4.2*p.yx + 1.7*time + vec2(1.8,5.2) );",
-			// "	p += .2*cos( 9.1*p.yx + 1.1*time + vec2(6.3,3.9) );",
-			"    p += .2*cos( 1.5*p.yx + 1.0*time + vec2(0.1*mouse.x,1.1*mouse.y) );",
-			"	p += .2*cos( 2.4*p.yx + 1.6*time + vec2(4.5*mouse.x,2.6*mouse.y) );",
-			"	p += .2*cos( 3.3*p.yx + 1.2*time + vec2(3.2*mouse.x,3.4*mouse.y) );",
-			"	p += .2*cos( 4.2*p.yx + 1.7*time + vec2(1.8*mouse.x,5.2*mouse.y) );",
-			"	p += .2*cos( 9.1*p.yx + 1.1*time + vec2(6.3*mouse.x,3.9*mouse.y) );",
-
-			"	float r = length( p );",
-			"    ",
-			// "    vec3 col = texture2D( texture, vec2(r,     0.0), 0.0 ).rgb;",
-			"    vec3 col = texture2D( texture, p).rgb;",
-
-			"    gl_FragColor = vec4( col, 1.0 );",
+		    "	vec2 p = -1.0 + 2.0*q;",
+		    "	p.x *= resolution.x/resolution.y;",
+	    	"	vec2 m = mouse;",
+	    	"	m.x *= resolution.x/resolution.y;",
+		    "	float r = sqrt( dot((p - m), (p - m)) );",
+		    "	float a = atan(p.y, p.x);",
+		    "	vec3 col = texture2D(texture, vUv).rgb;",
+		    "	if(r < r2){",
+		    "		float f = smoothstep(r2, r2 - 0.1, r);",
+		    "		col = mix( col, rgb, f);",
+		    "	}",
+			"	gl_FragColor = vec4(col,1.0);",
+			// "    gl_FragColor = vec4( col, 1.0 );",
 			"}"
 	    ].join("\n")
 
@@ -758,6 +836,7 @@ var CustomShaders = function(){
 	            "texture"  : { type: "t", value: null },
 	            "mouse"  : { type: "v2", value: null },
 	            "time"  : { type: "f", value: null },
+	            "r2"  : { type: "f", value: null },
 	            "resolution"  : { type: "v2", value: null },
 	        }
 	    ] ),
@@ -777,6 +856,7 @@ var CustomShaders = function(){
 			"uniform sampler2D texture;",
 			"varying vec2 vUv;",
 			"uniform vec2 mouse;",
+			"uniform float r2;",
 			"vec3 rgb2hsv(vec3 c)",
 			"{",
 			"    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);",
@@ -821,20 +901,31 @@ var CustomShaders = function(){
 			"	 vec2 mW = warp*mouse;",
 			"    vec2 uv = vUv+mW*sin(time);",
 			"    vec4 look = gl_FragColor = texture2D(texture,uv);",
-			"    vec2 offs = vec2(look.y-look.x,look.w-look.z)*vec2(mouse.x*uv.x/100.0, mouse.y*uv.y/100.0);",
+			"    vec2 offs = vec2(look.y-look.x,look.w-look.z)*vec2(mouse.x*uv.x/10.0, mouse.y*uv.y/10.0);",
 			"    vec2 coord = offs+vUv;",
 			"    vec4 repos = texture2D(texture, coord);",
 
-			"    gl_FragColor = texture2D(texture,uv);",
-			// "    gl_FragColor = repos;",
 			"  vec4 tex0 = repos;",
 			"  vec3 hsv = rgb2hsv(tex0.rgb);",
-			"  hsv.r += 0.01;",
+			"  //hsv.r += 0.01;",
 			"  //hsv.r = mod(hsv.r, 1.0);",
-			"  hsv.g *= 1.001;",
+			"  //hsv.g *= 1.001;",
 			"  // hsv.g = mod(hsv.g, 1.0);",
 			"  vec3 rgb = hsv2rgb(hsv); ",
-			"  gl_FragColor = vec4(rgb,1.0);",
+
+			"	vec2 q = vUv;",
+		    "	vec2 p = -1.0 + 2.0*q;",
+		    "	p.x *= resolution.x/resolution.y;",
+	    	"	vec2 m = mouse;",
+	    	"	m.x *= resolution.x/resolution.y;",
+		    "	float r = sqrt( dot((p - m), (p - m)) );",
+		    "	float a = atan(p.y, p.x);",
+		    "	vec3 col = texture2D(texture, vUv).rgb;",
+		    "	if(r < r2){",
+		    "		float f = smoothstep(r2, r2 - 0.5, r);",
+		    "		col = mix( col, rgb, f);",
+		    "	}",
+			"	gl_FragColor = vec4(col,1.0);",
 			"}"
 	    ].join("\n")
 

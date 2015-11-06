@@ -718,6 +718,7 @@ var CustomShaders = function(){
 	            "texture"  : { type: "t", value: null },
 	            "mouse"  : { type: "v2", value: null },
 	            "time"  : { type: "f", value: null },
+	            "r2"  : { type: "f", value: null },
 	            "resolution"  : { type: "v2", value: null },
 	        }
 	    ] ),
@@ -737,6 +738,7 @@ var CustomShaders = function(){
 			"uniform sampler2D texture;",
 			"varying vec2 vUv;",
 			"uniform vec2 mouse;",
+			"uniform float r2;",
 			"vec3 rgb2hsv(vec3 c)",
 			"{",
 			"    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);",
@@ -781,11 +783,10 @@ var CustomShaders = function(){
 			"	 vec2 mW = warp*mouse;",
 			"    vec2 uv = vUv+mW*sin(time);",
 			"    vec4 look = gl_FragColor = texture2D(texture,uv);",
-			"    vec2 offs = vec2(look.y-look.x,look.w-look.z)*vec2(mouse.x*uv.x/100.0, mouse.y*uv.y/100.0);",
+			"    vec2 offs = vec2(look.y-look.x,look.w-look.z)*vec2(mouse.x*uv.x/10.0, mouse.y*uv.y/10.0);",
 			"    vec2 coord = offs+vUv;",
 			"    vec4 repos = texture2D(texture, coord);",
 
-			"    gl_FragColor = texture2D(texture,uv);",
 			// "    gl_FragColor = repos;",
 			"  vec4 tex0 = repos;",
 			"  vec3 hsv = rgb2hsv(tex0.rgb);",
@@ -794,7 +795,20 @@ var CustomShaders = function(){
 			"  //hsv.g *= 1.001;",
 			"  // hsv.g = mod(hsv.g, 1.0);",
 			"  vec3 rgb = hsv2rgb(hsv); ",
-			"  gl_FragColor = vec4(rgb,1.0);",
+
+			"	vec2 q = vUv;",
+		    "	vec2 p = -1.0 + 2.0*q;",
+		    "	p.x *= resolution.x/resolution.y;",
+	    	"	vec2 m = mouse;",
+	    	"	m.x *= resolution.x/resolution.y;",
+		    "	float r = sqrt( dot((p - m), (p - m)) );",
+		    "	float a = atan(p.y, p.x);",
+		    "	vec3 col = texture2D(texture, vUv).rgb;",
+		    "	if(r < r2){",
+		    "		float f = smoothstep(r2, r2 - 0.5, r);",
+		    "		col = mix( col, rgb, f);",
+		    "	}",
+			"	gl_FragColor = vec4(rgb,1.0);",
 			"}"
 	    ].join("\n")
 

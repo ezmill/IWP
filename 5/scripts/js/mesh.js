@@ -15,6 +15,7 @@ var normalsMesh;
 var time = 0.0;
 var speeds = [];
 var texture;
+var renderSize = new THREE.Vector2(window.innerWidth, window.innerHeight);
 
 var sphere, uniforms, attributes;
 
@@ -42,15 +43,16 @@ function init()
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
 
-	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100000 );
-	camera.position.z = 500;
+	// camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100000 );
+    camera = new THREE.OrthographicCamera( renderSize.x / - 2, renderSize.x / 2, renderSize.y / 2, renderSize.y / - 2, -10000, 10000 );
+	camera.position.z = 367.54594531249666;
 	// controls = new THREE.OrbitControls(camera);
 	scene = new THREE.Scene();
 	
 	initGeometry();
 	initShader();
 	
-	var r = "assets/tex/cube.jpg";
+	var r = "assets/tex/square.jpg";
     var urls = [r, r, r, r, r, r];
 
     var textureCube = THREE.ImageUtils.loadTextureCube(urls, THREE.CubeRefractionMapping);
@@ -100,9 +102,9 @@ function initGeometry()
 	var holes = [];
 	geometry = new THREE.Geometry();
 	
-	var size = 10;
-	var countX = 100;
-	var countY = 80;
+	var size = 15;
+	var countX = window.innerWidth/14;
+	var countY = window.innerHeight/14;
 	
 	for (var i = 0; i < countX; i++) {
 		for (var j = 0; j < countY; j++) {

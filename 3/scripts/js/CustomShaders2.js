@@ -251,8 +251,8 @@ var CustomShaders = function(){
 			"varying vec2 vUv;",
 
 			"void main() {",
-			"  float step_w = mouse.x*100.0/resolution.x;",
-			"  float step_h = mouse.y*100.0/resolution.y;",
+			"  float step_w = 30.0/resolution.x;",
+			"  float step_h = 30.0/resolution.y;",
 			"  vec2 tc = vUv;",
 			"  vec4 input0 = texture2D(texture,tc);",
 			"   ",

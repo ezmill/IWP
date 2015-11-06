@@ -1,6 +1,6 @@
 var container;
 var scene, camera, light, renderer;
-var renderSize = new THREE.Vector2(window.innerWidth, window.innerHeight);
+var renderSize = new THREE.Vector2(window.innerWidth, 2500*(window.innerWidth/3750));
 // var renderSize = new THREE.Vector2(2448,3264);
 var mouse = new THREE.Vector2(0.0,0.0);
 var mouseDown = false;
@@ -22,7 +22,7 @@ function init(){
 	container = document.getElementById( 'container' );
 	container.appendChild(renderer.domElement);
 
-	texture = THREE.ImageUtils.loadTexture("assets/textures/arizona-muse-by-steven-klein-for-vogue-us-august-2015.jpg");
+	texture = THREE.ImageUtils.loadTexture("assets/textures/test.jpg");
 	texture.minFilter = texture.magFilter = THREE.NearestFilter;
     alpha = THREE.ImageUtils.loadTexture("assets/textures/alpha.jpg");
     alpha.minFilter = alpha.magFilter = THREE.NearestFilter;
@@ -80,6 +80,7 @@ function draw(){
 	  if(fbMaterial.fbos[i].material.uniforms["alpha"])fbMaterial.fbos[i].material.uniforms["alpha"].value = alpha;
 	}
     // texture.needsUpdate = true;
+    // fbMaterial.expand(1.001);
 
     fbMaterial.update();
 	renderer.render(scene, camera);

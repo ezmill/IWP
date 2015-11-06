@@ -50,29 +50,7 @@ function MeshShader(){
 			    "float r = sqrt( dot((p - m), (p - m)) );",
 			    "float a = atan(p.y, p.x);",
 			    "vec3 col = texture2D(texture, vUv).rgb;",
-
-			    "vec2 uv = vUv;",
-			    
-			    "vec2 e = 1.0/resolution.xy;",
-			    
-			    
-			    "float am1 = 0.5 + 0.5*sin( time );",
-			    "float am2 = cos( time*4.0 );",
-			    
-			    "for( int i=0; i<20; i++ )",
-			    "{",
-			    "	float h  = dot( texture2D(texture, uv*0.5,          -100.0).xyz, vec3(0.1) );",
-			    "	float h1 = dot( texture2D(texture, uv+vec2(e.x,0.0), -100.0).xyz, vec3(0.1) );",
-			    "	float h2 = dot( texture2D(texture, uv+vec2(0.0,e.y), -100.0).xyz, vec3(0.1) );",
-			    "	vec2 g = 0.001*vec2( (h1-h), (h2-h) )/e;",
-			    "	vec2 f = g.yx*vec2(-1.0,1.0);",
-			    "	",
-			    "	g = mix( g, f, am1 );",
-			    "	",
-			    "	uv -= 0.01*g*am2;",
-			    "}",
-			    
-			    "vec3 col2 = texture2D(texture, uv).xyz;",
+			    "vec3 col2 = vec3(0.0);",
 			    // "col2*=2.0;",
 			    // "vec3 col2 = texture2D(texture, vUv).rgb*vec3(2.0,2.0,2.0);",
 			    "if(r < r2){",
