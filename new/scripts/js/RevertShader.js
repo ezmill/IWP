@@ -1,4 +1,4 @@
-var RgbShiftShader = function(){
+var RevertShader = function(){
         this.uniforms = THREE.UniformsUtils.merge([
             {
                 "texture"  : { type: "t", value: null },
@@ -25,6 +25,7 @@ var RgbShiftShader = function(){
         this.fragmentShader = [
             
             "uniform sampler2D texture;",
+            "uniform sampler2D origTex;",
             "uniform sampler2D alpha;",
             "uniform vec2 resolution;",
             "uniform vec2 mouse;",
@@ -36,25 +37,7 @@ var RgbShiftShader = function(){
 
                 "vec3 col = texture2D(texture, vUv).rgb;",
                 "vec4 alpha = texture2D(alpha, vUv);",
-
-                "float ChromaticAberration = 100.0 / 10.0 + 8.0;",
-                "vec2 uv = vUv;",
-
-                "vec2 texel = 1.0 / resolution.xy;",
-
-                "vec2 coords = (uv - 0.5) * 2.0;",
-                "float coordDot = dot (coords, coords);",
-
-                "vec2 precompute = ChromaticAberration * coordDot * coords;",
-                "vec2 uvR = uv - texel.xy * precompute;",
-                "vec2 uvB = uv + texel.xy * precompute;",
-
-                "vec4 color;",
-                "color.r = texture2D(texture, uvR).r;",
-                "color.g = texture2D(texture, uv).g;",
-                "color.b = texture2D(texture, uvB).b;",
-
-                "vec4 col2 = color;",
+                "vec4 col2 = texture2D(origTex, vUv);",
                 
                 // "col2*=2.0;",
                 // "vec3 col2 = texture2D(texture, vUv).rgb*vec3(2.0,2.0,2.0);",

@@ -7,6 +7,9 @@ var mouseDown = false;
 var r2 = 0.0;
 var time = 0.0;
 var mask;
+var origTex;
+var shaders = [RgbShiftShader, DenoiseShader, RevertShader];
+var shaderIndex = 0;
 init();
 animate();
 
@@ -32,12 +35,14 @@ function init(){
 }
 function createEffect(){
 	texture = THREE.ImageUtils.loadTexture("assets/textures/test.jpg");
+	origTex = THREE.ImageUtils.loadTexture("assets/textures/test.jpg");
 	mask = new Mask();
 	mask.init();
 	alpha = new THREE.Texture(mask.canvas);
 	alpha.minFilter = alpha.magFilter = THREE.LinearFilter;
 	alpha.needsUpdate = true;
-	shader = new RgbShiftShader();
+	// shader = new RgbShiftShader();
+	shader = new shaders[shaderIndex]();
 	material = new THREE.ShaderMaterial({
 		uniforms: shader.uniforms,
 		vertexShader: shader.vertexShader,
@@ -46,6 +51,7 @@ function createEffect(){
 		transparent: true
 	});
 	material.uniforms["texture"].value = texture;
+	material.uniforms["origTex"].value = origTex;
 	material.uniforms["alpha"].value = alpha;
 	material.uniforms["resolution"].value = renderSize;
 	material.uniforms["r2"].value = r2;
@@ -64,11 +70,10 @@ function createNewEffect(){
     var img = new Image();
     img.src = file;
     img.onload = function(e) {
-		// texture = new THREE.Texture(img);
-		// texture = new THREE.Texture(img);
 		texture.image = img;
 	    mask.erase();
-		shader = new DenoiseShader();
+		// shader = new DenoiseShader();
+		shader = new shaders[shaderIndex]();
 		material = new THREE.ShaderMaterial({
 			uniforms: shader.uniforms,
 			vertexShader: shader.vertexShader,
@@ -77,6 +82,7 @@ function createNewEffect(){
 			transparent: true
 		});
 		material.uniforms["texture"].value = texture;
+		material.uniforms["origTex"].value = origTex;
 		material.uniforms["alpha"].value = alpha;
 		material.uniforms["resolution"].value = renderSize;
 		material.uniforms["r2"].value = r2;
@@ -121,6 +127,12 @@ function onKeyDown(e){
 		mask.switchColor();
 	}
 	if(e.keyCode == '32'){
+		e.preventDefault();
+		if(shaderIndex == shaders.length - 1){
+			shaderIndex = 0;
+		} else {
+			shaderIndex++;
+		}
 		createNewEffect();
 	}
 }

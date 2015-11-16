@@ -1,7 +1,8 @@
-function RgbShiftShader(){
+var RgbShiftShader = function(){
         this.uniforms = THREE.UniformsUtils.merge([
             {
                 "texture"  : { type: "t", value: null },
+                "origTex"  : { type: "t", value: null },
                 "alpha"  : { type: "t", value: null },
                 "mouse"  : { type: "v2", value: null },
                 "resolution"  : { type: "v2", value: null },
