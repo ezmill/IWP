@@ -25,9 +25,9 @@ if (!file_exists('gifTemp/' . $folder . '/')) {
     mkdir('gifTemp/' . $folder . '/', 0777, true);
 }
 
-$file = "gifTemp/" . $folder . "/" . $frame . ".gif";
+$file = "gifTemp/" . $folder . "/test.jpg";
 
-imagegif($newImg, $file);
+imagejpeg($newImg, $file);
 
 imagedestroy($src);
 imagedestroy($newImg);

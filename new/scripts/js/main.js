@@ -10,6 +10,7 @@ var mask;
 var origTex;
 var shaders = [RgbShiftShader, DenoiseShader, RevertShader];
 var shaderIndex = 0;
+var rtt;
 init();
 animate();
 
@@ -35,7 +36,9 @@ function init(){
 }
 function createEffect(){
 	texture = THREE.ImageUtils.loadTexture("assets/textures/test.jpg");
+	texture.minFilter = texture.magFilter = THREE.LinearFilter;
 	origTex = THREE.ImageUtils.loadTexture("assets/textures/test.jpg");
+	origTex.minFilter = origTex.magFilter = THREE.LinearFilter;
 	mask = new Mask();
 	mask.init();
 	alpha = new THREE.Texture(mask.canvas);
@@ -59,13 +62,17 @@ function createEffect(){
 	geometry = new THREE.PlaneBufferGeometry(renderSize.x, renderSize.y);
 	mesh = new THREE.Mesh(geometry, material);
 	scene.add(mesh);
-}
+
+	// rtt = new THREE.WebGLRenderTarget();
+	// rtt.setSize(renderSize.x, renderSize.y);
+	// rtt.minFilter = rtt.magFilter = THREE.LinearFilter;
+}	
 function createNewEffect(){
 	texture.dispose();
 	material.dispose();
 	geometry.dispose();
 	scene.remove(mesh);
-    var blob = dataURItoBlob(renderer.domElement.toDataURL('image/png'));
+    var blob = dataURItoBlob(renderer.domElement.toDataURL('image/jpg'));
     var file = window.URL.createObjectURL(blob);
     var img = new Image();
     img.src = file;
@@ -90,6 +97,11 @@ function createNewEffect(){
 		geometry = new THREE.PlaneBufferGeometry(renderSize.x, renderSize.y);
 		mesh = new THREE.Mesh(geometry, material);
 		scene.add(mesh);
+    	if(shaderIndex == shaders.length - 1){
+    		shaderIndex = 0;
+    	} else {
+    		shaderIndex++;
+    	}
     }
 }
 function animate(){
@@ -105,6 +117,7 @@ function onMouseMove(event){
 }
 function onMouseDown(){
 	mouseDown = true;
+	createNewEffect();
 }
 function onMouseUp(){
 	mouseDown = false;
@@ -120,6 +133,7 @@ function draw(){
 		material.uniforms["r2"].value = r2;
 	}
 	renderer.render(scene, camera);
+
 }
 function onKeyDown(e){
 	console.log(e);
@@ -128,11 +142,11 @@ function onKeyDown(e){
 	}
 	if(e.keyCode == '32'){
 		e.preventDefault();
-		if(shaderIndex == shaders.length - 1){
-			shaderIndex = 0;
-		} else {
-			shaderIndex++;
-		}
+		// if(shaderIndex == shaders.length - 1){
+		// 	shaderIndex = 0;
+		// } else {
+		// 	shaderIndex++;
+		// }
 		createNewEffect();
 	}
 }

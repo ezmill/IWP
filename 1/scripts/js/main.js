@@ -208,8 +208,8 @@ function screenshot(renderer) {
                 date.getSeconds(),
                 date.getMilliseconds()
             ];
-            var mili = components.join("");
-
+            // var mili = components.join("");
+            var mili = 1;
             renderedImage = renderer.domElement.toDataURL('image/png');
             $.ajax({
                 type: "POST",
@@ -218,8 +218,8 @@ function screenshot(renderer) {
                   img:renderedImage,
                   frame:0,
                   folder:mili,
-                  imgWidth:renderSize.x,
-                  imgHeight:renderSize.y
+                  imgWidth:500,
+                  imgHeight:500
                 }
               }).done(function(o) {
                  
