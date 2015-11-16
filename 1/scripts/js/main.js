@@ -190,14 +190,44 @@ function screenshot(renderer) {
         grabScreen(renderer);
 
         function grabScreen(renderer) {
-            var blob = dataURItoBlob(renderer.domElement.toDataURL('image/png'));
-            var file = window.URL.createObjectURL(blob);
-            var img = new Image();
-            img.src = file;
-            img.onload = function(e) {
-                window.open(this.src);
+            // var blob = dataURItoBlob(renderer.domElement.toDataURL('image/png'));
+            // var file = window.URL.createObjectURL(blob);
+            // var img = new Image();
+            // img.src = file;
+            // img.onload = function(e) {
+                // window.open(this.src);
+// 
+            // }
+            var date = new Date();
+            var components = [
+                date.getYear(),
+                date.getMonth(),
+                date.getDate(),
+                date.getHours(),
+                date.getMinutes(),
+                date.getSeconds(),
+                date.getMilliseconds()
+            ];
+            var mili = components.join("");
 
-            }
+            renderedImage = renderer.domElement.toDataURL('image/png');
+            $.ajax({
+                type: "POST",
+                url: "scripts/js/uploadImage.php",
+                data: { 
+                  img:renderedImage,
+                  frame:0,
+                  folder:mili,
+                  imgWidth:renderSize.x,
+                  imgHeight:renderSize.y
+                }
+              }).done(function(o) {
+                 
+                saveFrame();
+             
+              }).fail(function(o){                 
+                alert("upload failed");
+              });
         }
         function dataURItoBlob(dataURI) {
             var byteString;
@@ -232,6 +262,12 @@ function screenshot(renderer) {
         });
     }
 }
+function saveFrame(){
+    // createGif();
+    console.log("done");
+    // saveFrame();
+}
+
 function hslaColor(h,s,l,a)
   {
     return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
