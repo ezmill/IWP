@@ -1,4 +1,4 @@
-function DenoiseShader(){
+function RgbShiftShader(){
         this.uniforms = THREE.UniformsUtils.merge([
             {
                 "texture"  : { type: "t", value: null },
@@ -36,20 +36,24 @@ function DenoiseShader(){
                 "vec3 col = texture2D(texture, vUv).rgb;",
                 "vec4 alpha = texture2D(alpha, vUv);",
 
-                "vec4 center = texture2D(texture, vUv);",
-                "float exponent = 1.0;",
-                "vec4 color = vec4(0.0);",
-                "float total = 0.0;",
-                "for (float x = -4.0; x <= 4.0; x += 1.0) {",
-                "    for (float y = -4.0; y <= 4.0; y += 1.0) {",
-                "        vec4 sample = texture2D(texture, vUv + vec2(x, y) / resolution);",
-                "        float weight = 1.0 - abs(dot(sample.rgb - center.rgb, vec3(0.25)));",
-                "        weight = pow(weight, exponent);",
-                "        color += sample * weight;",
-                "        total += weight;",
-                "    }",
-                "}",
-                "vec4 col2 = color / total;",
+                "float ChromaticAberration = 100.0 / 10.0 + 8.0;",
+                "vec2 uv = vUv;",
+
+                "vec2 texel = 1.0 / resolution.xy;",
+
+                "vec2 coords = (uv - 0.5) * 2.0;",
+                "float coordDot = dot (coords, coords);",
+
+                "vec2 precompute = ChromaticAberration * coordDot * coords;",
+                "vec2 uvR = uv - texel.xy * precompute;",
+                "vec2 uvB = uv + texel.xy * precompute;",
+
+                "vec4 color;",
+                "color.r = texture2D(texture, uvR).r;",
+                "color.g = texture2D(texture, uv).g;",
+                "color.b = texture2D(texture, uvB).b;",
+
+                "vec4 col2 = color;",
                 
                 // "col2*=2.0;",
                 // "vec3 col2 = texture2D(texture, vUv).rgb*vec3(2.0,2.0,2.0);",

@@ -29,7 +29,7 @@ function init(){
 	alpha = new THREE.Texture(mask.canvas);
 	alpha.minFilter = alpha.magFilter = THREE.LinearFilter;
 	alpha.needsUpdate = true;
-	shader = new MeshShader();
+	shader = new RgbShiftShader();
 	material = new THREE.ShaderMaterial({
 		uniforms: shader.uniforms,
 		vertexShader: shader.vertexShader,
