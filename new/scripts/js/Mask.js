@@ -12,6 +12,7 @@ function Mask(){
 		this.ctx.rect(0,0, renderSize.x, renderSize.y);
 		this.ctx.fillStyle = 'black';
 		this.ctx.fill();	
+		document.body.appendChild(this.canvas);
 	}
 	this.update = function(){
 		if(mouseDown){
